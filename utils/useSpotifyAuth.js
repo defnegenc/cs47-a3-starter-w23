@@ -21,19 +21,23 @@ const {
 // needed so that the browswer closes the modal after auth token
 WebBrowser.maybeCompleteAuthSession();
 
+
 const formatter = (data) => data.map((val) => {
   const artists = val.artists?.map((artist) => ({ name: artist.name }));
-  // returning undefined for now to not confuse students, ideally a fix would be a hosted version of this
   return ({
+    id: val.id,
+    imageUrl: val.album?.images[0]?.url,
     songTitle: val.name,
     songArtists: artists,
     albumName: val.album?.name,
-    imageUrl: val.album?.images[0]?.url ?? undefined,
-    duration: val.duration_ms,
+    duration: val.duration_ms, // Change this line back to 'duration'
     externalUrl: val.external_urls?.spotify ?? undefined,
     previewUrl: val.preview_url ?? undefined,
   });
 });
+
+
+
 
 const useSpotifyAuth = (ALBUM_ONLY = false) => {
   const [token, setToken] = useState("");
@@ -63,6 +67,8 @@ const useSpotifyAuth = (ALBUM_ONLY = false) => {
     if (response?.type === "success") {
       const { access_token } = response.params;
       setToken(access_token);
+      // Checking
+      console.log("Token fetched:", access_token);
     }
     if (Platform.OS === "web" && location.hash)
       setToken(location.hash.split("=")[1]);
